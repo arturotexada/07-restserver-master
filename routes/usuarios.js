@@ -1,6 +1,9 @@
 
 const { Router } = require('express');
 const { check } = require('express-validator');
+const Role = require('../models/role');
+
+const { validarCampos } = require('../middlewares/validar-campos');
 
 const { usuariosGet,
         usuariosPut,
@@ -16,7 +19,16 @@ router.get('/', usuariosGet );
 router.put('/:id', usuariosPut );
 
 router.post('/', 
-[ check('correo', 'El correo no es válido').isEmail() ] 
+[ 
+    check('nombre', 'El NOMBRE es obligatorio').not().isEmpty(),
+    check('password', 'El password debe ser mayo a 6 letras').isLength({min:6}), 
+    check('correo', 'El correo no es válido').isEmail(), 
+    //check('rol', 'El rol no es válido').isIn(['ADMIN_ROLE', 'USER_ROLE']),     // Validar esto mejor contra la Base de Datos
+    check('rol').custom( async(rol = '') => {
+        const existeRol = await Role.findOne( {rol} )
+    })
+    validarCampos
+]  
                , usuariosPost );
 
 router.delete('/', usuariosDelete );
