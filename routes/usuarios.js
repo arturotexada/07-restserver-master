@@ -1,7 +1,7 @@
 
 const { Router } = require('express');
 const { check } = require('express-validator');
-const Role = require('../models/role');
+// const Role = require('../models/role');
 
 const { validarCampos } = require('../middlewares/validar-campos');
 
@@ -18,18 +18,28 @@ router.get('/', usuariosGet );
 
 router.put('/:id', usuariosPut );
 
-router.post('/', 
-[ 
+// router.post('/', [ 
+//     check('nombre', 'El NOMBRE es obligatorio').not().isEmpty(),
+//     check('password', 'El PASSWORD debe ser mayo a 6 letras').isLength({min:6}), 
+//     check('correo', 'El CORREO no es válido').isEmail(), 
+//     //check('rol', 'El rol no es válido').isIn(['ADMIN_ROLE', 'USER_ROLE']),     // Validar esto mejor contra la Base de Datos
+//     check('rol').custom( async( rol = '') => {
+//         const existeRol = await Role.findOne({ rol });
+//          if ( !existeRol ) {
+//             throw new Error(`El rol ${ rol } no está registrado en la Base de Datos`)
+//          }
+//     }),         
+//     validarCampos
+// ], usuariosPost );
+
+router.post('/', [ 
     check('nombre', 'El NOMBRE es obligatorio').not().isEmpty(),
-    check('password', 'El password debe ser mayo a 6 letras').isLength({min:6}), 
-    check('correo', 'El correo no es válido').isEmail(), 
+    check('password', 'El PASSWORD debe ser mayo a 6 letras').isLength({min:6}), 
+    check('correo', 'El CORREO no es válido').isEmail(), 
     //check('rol', 'El rol no es válido').isIn(['ADMIN_ROLE', 'USER_ROLE']),     // Validar esto mejor contra la Base de Datos
-    check('rol').custom( async(rol = '') => {
-        const existeRol = await Role.findOne( {rol} )
-    })
+    check('rol').custom( esRolValido ),         
     validarCampos
-]  
-               , usuariosPost );
+], usuariosPost );
 
 router.delete('/', usuariosDelete );
 

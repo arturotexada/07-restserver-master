@@ -21,7 +21,7 @@ const UsuarioSchema = Schema({
     rol: {
         type: String,
         required: true,
-        enum: ['ADMIN_ROLE', 'USER_ROLE']
+        //enum: ['ADMIN_ROLE', 'USER_ROLE']   // AQUI EL INSTRUCTOR ESCRIBIÓ EMUN en lugar de ENUM
     },
     estado: {
         type: Boolean,
