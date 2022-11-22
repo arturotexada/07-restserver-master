@@ -28,13 +28,14 @@ const usuariosPost = async (req, res = response) => {
   //const body = req.body;
   const usuario = new Usuario({ nombre, correo, password, rol });
 
-  // Verificar si el correo existe
-  const existeEmail = await Usuario.findOne({ correo });
-  if (existeEmail) {
-    return res.status(400).json({
-      msg: "Ese correo ya está registrado",
-    });
-  }
+  // // Verificar si el correo existe
+  // const existeEmail = await Usuario.findOne({ correo });
+  // if (existeEmail) {
+  //   return res.status(400).json({
+  //     msg: "Ese correo ya está registrado",
+  //   });
+  // }
+
   // Encriptar la contraseña  // el hash
   const salt = bcryptjs.genSaltSync(10);
   usuario.password = bcryptjs.hashSync(password, salt);
