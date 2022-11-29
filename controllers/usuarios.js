@@ -7,18 +7,36 @@ const Usuario = require("../models/usuario");
 const usuariosGet = async(req = request, res = response) => {
  // const { q, nombre = "No name", apikey, page = 1, limit } = req.query;
   const { limite = 5, desde = 0  } = req.query;
-  const usuarios = await Usuario.find()
-  .skip(Number(desde))
-  .limit(Number(limite));
+
+  const query = {estado: true}
+
+  // // Promesa 1 // 163 ms
+  // const usuarios = await Usuario.find(query)
+  //   .skip(Number(desde))
+  //   .limit(Number(limite));
+
+  // // Promesa 2 // 165 ms
+  // const total = await Usuario.countDocuments(query);
+
+// Ambas promesas prcesadas paralelamente y hasta que se ejecutan y resuelvan las dos espera el Await  // 84ms
+//const resp = await Promise.all([
+  const [ total, usuarios ] = await Promise.all([  
+    Usuario.count(query),
+    Usuario.find(query)
+      .skip( Number( desde ))
+      .limit( Number( limite ))
+]);
 
   res.json({
+    //resp
+    total,
     usuarios 
-    // msg: "get API - controlador",
-    // q,
-    // nombre,
-    // apikey,
-    // page,
-    // limit,
+          // msg: "get API - controlador",
+          // q,
+          // nombre,
+          // apikey,
+          // page,
+          // limit,
   });
 };
 
@@ -75,10 +93,18 @@ const usuariosPatch = (req, res = response) => {
   });
 };
 
-const usuariosDelete = (req, res = response) => {
-  res.json({
-    msg: "delete API - usuariosDelete",
-  });
+const usuariosDelete = async(req, res = response) => {
+
+  const { id } = req.params;
+
+  // // Borrado Físicamente
+  // const usuario = await Usuario.findByIdAndDelete( id );
+
+ // Borrado por Estado Actualizado
+    const usuario = await Usuario.findByIdAndUpdate( id, { estado: false } );
+
+  res.json(usuario);
+    // msg: "delete API - usuariosDelete",
 };
 
 module.exports = {
